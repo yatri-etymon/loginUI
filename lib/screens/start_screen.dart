@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:login_demo/screens/with_otp_screen.dart';
 import 'package:login_demo/widgeta/background_image.dart';
 import 'package:login_demo/widgeta/square_tile.dart';
 
@@ -39,7 +40,10 @@ class StartScreen extends StatelessWidget {
                       style: ButtonStyle(
                         backgroundColor: WidgetStatePropertyAll(Colors.white),
                       ),
-                      onPressed: () {},
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => WithOtpScreen()),
+                      ),
                       child: Text(
                         'Login with OTP',
                         style: GoogleFonts.lato(
