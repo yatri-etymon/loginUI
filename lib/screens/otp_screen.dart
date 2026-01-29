@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:login_demo/screens/otp_screen.dart';
 import 'package:login_demo/widgeta/background_image.dart';
-import 'package:login_demo/widgeta/my_textfield.dart';
+import 'package:pinput/pinput.dart';
 
-class WithOtpScreen extends StatefulWidget {
-  const WithOtpScreen({super.key});
+class OtpScreen extends StatefulWidget {
+  const OtpScreen({super.key});
 
   @override
-  State<WithOtpScreen> createState() => _WithOtpScreenState();
+  State<OtpScreen> createState() => _OtpScreenState();
 }
 
-class _WithOtpScreenState extends State<WithOtpScreen> {
+class _OtpScreenState extends State<OtpScreen> {
   final controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -28,7 +27,7 @@ class _WithOtpScreenState extends State<WithOtpScreen> {
           body: Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.52, // 👈 60%
+              height: MediaQuery.of(context).size.height * 0.52,
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -41,12 +40,12 @@ class _WithOtpScreenState extends State<WithOtpScreen> {
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25.0),
                       child: Text(
-                        'Email/Phone number :',
+                        'User Email/Phone number',
                         style: GoogleFonts.lato(
                           letterSpacing: 1,
                           fontSize: 14,
@@ -55,32 +54,23 @@ class _WithOtpScreenState extends State<WithOtpScreen> {
                         ),
                       ),
                     ),
-                    MyTextfield(
-                      controller: controller,
-                      hintText: '',
-                      obscureText: false,
-                    ),
+                    SizedBox(height: 15),
+                    Pinput(length: 6),
                     SizedBox(height: 25),
-                    Align(
-                      alignment: AlignmentGeometry.center,
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStatePropertyAll(
-                            Colors.teal.shade700,
-                          ),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          Colors.teal.shade700,
                         ),
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => OtpScreen()),
-                        ),
-                        child: Text(
-                          'Send OTP',
-                          style: GoogleFonts.lato(
-                            letterSpacing: 1,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
+                      ),
+                      onPressed: () {},
+                      child: Text(
+                        'Verify OTP',
+                        style: GoogleFonts.lato(
+                          letterSpacing: 1,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
                         ),
                       ),
                     ),
