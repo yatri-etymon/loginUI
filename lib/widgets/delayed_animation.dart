@@ -24,7 +24,7 @@ class _DelayedAnimationState extends State<DelayedAnimation>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 700),
+      duration: const Duration(milliseconds: 900),
     );
 
     final curve = CurvedAnimation(
