@@ -1,6 +1,6 @@
 name: login_blue
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
@@ -9,8 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
-  google_fonts:
+  pinput: ^6.0.1
+  google_fonts: ^8.0.0
 
 dev_dependencies:
   flutter_test:
