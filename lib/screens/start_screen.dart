@@ -178,6 +178,9 @@ class _StartScreenState extends State<StartScreen> {
                         style: const TextStyle(color: Colors.black87),
                         decoration: InputDecoration(
                           hintText: 'Email / Phone number',
+                          hintStyle: GoogleFonts.poppins(
+                            color: Colors.grey.shade600,
+                          ),
                           filled: true,
                           fillColor: Colors.white70,
                           suffixIcon: emailController.text.trim().isNotEmpty
@@ -185,7 +188,12 @@ class _StartScreenState extends State<StartScreen> {
                                   onPressed: otpSent ? null : _sendOtp,
                                   child: Text(
                                     otpSent ? 'Sent' : 'Send OTP',
-                                    style: GoogleFonts.poppins(fontSize: 12),
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 15,
+                                      color: otpSent
+                                          ? Colors.grey.shade600
+                                          : Colors.lightBlue.shade600,
+                                    ),
                                   ),
                                 )
                               : null,
