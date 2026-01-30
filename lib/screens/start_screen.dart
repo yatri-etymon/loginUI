@@ -1,12 +1,15 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pinput/pinput.dart';
-
 import 'package:login_blue/widgets/background_image.dart';
 import 'package:login_blue/widgets/delayed_animation.dart';
 import 'package:login_blue/widgets/square_tile.dart';
+import 'package:pinput/pinput.dart';
+
+// Assuming these are your local imports
+// import 'package:login_blue/widgets/background_image.dart';
+// import 'package:login_blue/widgets/delayed_animation.dart';
+// import 'package:login_blue/widgets/square_tile.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -56,8 +59,9 @@ class _StartScreenState extends State<StartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final keyboardInset = MediaQuery.of(context).viewInsets.bottom;
+    final size = MediaQuery.of(context).size;
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final bool isKeyboardOpen = keyboardHeight > 0;
 
     return PopScope(
       canPop: !isExpanded,
@@ -67,32 +71,30 @@ class _StartScreenState extends State<StartScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        // the background layers when the keyboard pops up.
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.black,
         body: Stack(
           children: [
-            // BACKGROUND
+            // 1. BACKGROUND LAYER
             const BackgroundImage(),
 
-            // BLUR BACKGROUND
-            if (isExpanded)
+            // 2. BLUR & OVERLAY
+            if (isExpanded) ...[
               BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Container(color: Colors.transparent),
+                child: Container(color: Colors.black.withValues(alpha: 0.3)),
               ),
-
-            // DARK OVERLAY + OUTSIDE TAP
-            if (isExpanded)
               ModalBarrier(dismissible: true, onDismiss: _closeLogin),
+            ],
 
-            // MAIN CONTENT
+            // 3. STATIC CONTENT (Welcome Text)
             SafeArea(
-              child: GestureDetector(
-                behavior: HitTestBehavior.deferToChild,
-                onTap: () => FocusScope.of(context).unfocus(),
+              child: SizedBox(
+                width: double.infinity,
                 child: Column(
                   children: [
-                    const Spacer(),
-
+                    const SizedBox(height: 110),
                     DelayedAnimation(
                       delay: 500,
                       child: Text(
@@ -103,9 +105,7 @@ class _StartScreenState extends State<StartScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 12),
-
                     DelayedAnimation(
                       delay: 700,
                       child: Text(
@@ -113,171 +113,116 @@ class _StartScreenState extends State<StartScreen> {
                         style: GoogleFonts.poppins(color: Colors.white70),
                       ),
                     ),
-                    const SizedBox(height: 95),
-                    const Spacer(),
-
-                    // GLASS LOGIN CARD (keyboard-aware)
-                    DelayedAnimation(
-                      delay: 900,
-                      child: AnimatedPadding(
-                        duration: const Duration(milliseconds: 250),
-                        curve: Curves.easeOut,
-                        padding: EdgeInsets.only(
-                          bottom: keyboardInset > 0 ? keyboardInset * 0.6 : 0,
-                        ),
-                        child: Center(
-                          child: Material(
-                            color: Colors.transparent,
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: () {
-                                if (!isExpanded) {
-                                  setState(() => isExpanded = true);
-                                }
-                              },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                  isExpanded ? 28 : 40,
-                                ),
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                    sigmaX: 12,
-                                    sigmaY: 12,
-                                  ),
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 400),
-                                    width: width * 0.85,
-                                    padding: const EdgeInsets.all(20),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.18,
-                                      ),
-                                      borderRadius: BorderRadius.circular(
-                                        isExpanded ? 28 : 40,
-                                      ),
-                                      border: Border.all(color: Colors.white24),
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          'Login',
-                                          style: GoogleFonts.kaushanScript(
-                                            fontSize: 22,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-
-                                        if (isExpanded) ...[
-                                          const SizedBox(height: 18),
-
-                                          /// EMAIL / PHONE
-                                          TextField(
-                                            controller: emailController,
-                                            keyboardType:
-                                                TextInputType.emailAddress,
-                                            onChanged: (_) => setState(() {}),
-                                            onTap: () {
-                                              if (!showOtp) {
-                                                setState(() => showOtp = true);
-                                              }
-                                            },
-                                            decoration: InputDecoration(
-                                              hintText: 'Email / Phone number',
-                                              filled: true,
-                                              fillColor: Colors.white70,
-                                              suffixIcon:
-                                                  emailController.text
-                                                      .trim()
-                                                      .isNotEmpty
-                                                  ? TextButton(
-                                                      onPressed: otpSent
-                                                          ? null
-                                                          : _sendOtp,
-                                                      child: Text(
-                                                        otpSent
-                                                            ? 'Sent'
-                                                            : 'Send OTP',
-                                                        style:
-                                                            GoogleFonts.poppins(),
-                                                      ),
-                                                    )
-                                                  : null,
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(14),
-                                                borderSide: BorderSide.none,
-                                              ),
-                                            ),
-                                          ),
-
-                                          const SizedBox(height: 16),
-
-                                          /// SOCIAL ↔ OTP SWITCH
-                                          AnimatedSize(
-                                            duration: const Duration(
-                                              milliseconds: 300,
-                                            ),
-                                            curve: Curves.easeInOut,
-                                            child: AnimatedSwitcher(
-                                              duration: const Duration(
-                                                milliseconds: 300,
-                                              ),
-                                              transitionBuilder:
-                                                  (child, animation) {
-                                                    return FadeTransition(
-                                                      opacity: animation,
-                                                      child: SlideTransition(
-                                                        position: Tween<Offset>(
-                                                          begin: const Offset(
-                                                            0,
-                                                            0.15,
-                                                          ),
-                                                          end: Offset.zero,
-                                                        ).animate(animation),
-                                                        child: child,
-                                                      ),
-                                                    );
-                                                  },
-                                              child: showOtp
-                                                  ? _OtpSection(
-                                                      key: const ValueKey(
-                                                        'otp',
-                                                      ),
-                                                      controller: otpController,
-                                                      focusNode: otpFocusNode,
-                                                      enabled: otpSent,
-                                                    )
-                                                  : const _SocialLoginSection(
-                                                      key: ValueKey('social'),
-                                                    ),
-                                            ),
-                                          ),
-                                        ],
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 40),
                   ],
                 ),
               ),
+            ),
+            // Instead of a Column, we position this relative to the bottom.
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeOutCubic,
+              left: 0,
+              right: 0,
+              // If keyboard is open, move card above it. Otherwise, park it near bottom.
+              bottom: isKeyboardOpen ? keyboardHeight + 20 : 60,
+              child: Center(child: _buildGlassCard(size.width)),
             ),
           ],
         ),
       ),
     );
   }
-}
 
-//SOCIAL LOGIN
+  Widget _buildGlassCard(double screenWidth) {
+    return DelayedAnimation(
+      delay: 900,
+      child: Material(
+        color: Colors.transparent,
+        child: GestureDetector(
+          onTap: () {
+            if (!isExpanded) setState(() => isExpanded = true);
+          },
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(isExpanded ? 28 : 40),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 400),
+                width: screenWidth * 0.85,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(isExpanded ? 28 : 40),
+                  border: Border.all(color: Colors.white24),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Login',
+                      style: GoogleFonts.kaushanScript(
+                        fontSize: 22,
+                        color: Colors.white,
+                      ),
+                    ),
+                    if (isExpanded) ...[
+                      const SizedBox(height: 18),
+                      TextField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        autofocus: false,
+                        onChanged: (_) => setState(() {}),
+                        onTap: () {
+                          if (!showOtp) setState(() => showOtp = true);
+                        },
+                        style: const TextStyle(color: Colors.black87),
+                        decoration: InputDecoration(
+                          hintText: 'Email / Phone number',
+                          filled: true,
+                          fillColor: Colors.white70,
+                          suffixIcon: emailController.text.trim().isNotEmpty
+                              ? TextButton(
+                                  onPressed: otpSent ? null : _sendOtp,
+                                  child: Text(
+                                    otpSent ? 'Sent' : 'Send OTP',
+                                    style: GoogleFonts.poppins(fontSize: 12),
+                                  ),
+                                )
+                              : null,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 300),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: showOtp
+                              ? _OtpSection(
+                                  key: const ValueKey('otp'),
+                                  controller: otpController,
+                                  focusNode: otpFocusNode,
+                                  enabled: otpSent,
+                                )
+                              : _SocialLoginSection(
+                                  key: const ValueKey('social'),
+                                ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class _SocialLoginSection extends StatelessWidget {
   const _SocialLoginSection({super.key});
@@ -288,12 +233,15 @@ class _SocialLoginSection extends StatelessWidget {
       children: [
         Row(
           children: const [
-            Expanded(child: Divider(color: Colors.white)),
+            Expanded(child: Divider(indent: 5, color: Colors.white)),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Text('OR', style: TextStyle(color: Colors.white)),
+              child: Text(
+                'OR',
+                style: TextStyle(color: Colors.white, fontSize: 12),
+              ),
             ),
-            Expanded(child: Divider(color: Colors.white)),
+            Expanded(child: Divider(endIndent: 5, color: Colors.white)),
           ],
         ),
         const SizedBox(height: 16),
@@ -309,8 +257,6 @@ class _SocialLoginSection extends StatelessWidget {
     );
   }
 }
-
-//OTP SECTION
 
 class _OtpSection extends StatelessWidget {
   final TextEditingController controller;
@@ -340,16 +286,16 @@ class _OtpSection extends StatelessWidget {
           enabled: enabled,
           keyboardType: TextInputType.number,
           defaultPinTheme: PinTheme(
-            width: 46,
-            height: 52,
+            width: 42,
+            height: 48,
             textStyle: GoogleFonts.poppins(
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Colors.black,
             ),
             decoration: BoxDecoration(
               color: Colors.white70,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
           onCompleted: (otp) {},
