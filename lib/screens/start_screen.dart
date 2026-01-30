@@ -21,7 +21,7 @@ class StartScreen extends StatelessWidget {
                   top: 16.0,
                   left: 16.0,
                   right: 16.0,
-                  bottom: 50.0,
+                  bottom: 27.0,
                 ),
                 child: Column(
                   children: [
@@ -93,6 +93,20 @@ class StartScreen extends StatelessWidget {
                           onTap: () {},
                         ),
                       ],
+                    ),
+                    SizedBox(height: 8),
+                    TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        'Skip For now >',
+                      
+                        style: GoogleFonts.lato(
+                          letterSpacing: 2,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ],
                 ),
