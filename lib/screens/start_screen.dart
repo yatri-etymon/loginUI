@@ -97,14 +97,20 @@ class StartScreen extends StatelessWidget {
                     SizedBox(height: 8),
                     TextButton(
                       onPressed: () {},
-                      child: Text(
-                        'Skip For now >',
-                      
-                        style: GoogleFonts.lato(
-                          letterSpacing: 2,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(color: Colors.white, width: 1),
+                          ),
+                        ),
+                        child: Text(
+                          'Skip For Now',
+                          style: GoogleFonts.lato(
+                            letterSpacing: 1,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
