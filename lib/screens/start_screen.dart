@@ -21,7 +21,7 @@ class StartScreen extends StatelessWidget {
                   top: 16.0,
                   left: 16.0,
                   right: 16.0,
-                  bottom: 50.0,
+                  bottom: 25.0,
                 ),
                 child: Column(
                   children: [
@@ -37,13 +37,14 @@ class StartScreen extends StatelessWidget {
                     Spacer(),
 
                     MyElevatedButton(
-                      text: 'Log-In with OTP',
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => WithOtpScreen()),
-                      ),
+                      text: 'Log-In with Google',
+                      onTap: () {},
                       color: Colors.white,
                       textColor: Colors.green.shade900,
+                      prefixIcon: Image.asset(
+                        'assets/icon/google.png',
+                        width: 25,
+                      ),
                     ),
                     Row(
                       children: [
@@ -68,10 +69,29 @@ class StartScreen extends StatelessWidget {
                       ],
                     ),
                     MyElevatedButton(
-                      text: 'Log-In with Google',
-                      onTap: () {},
+                      text: 'Log-In with OTP',
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => WithOtpScreen()),
+                      ),
                       color: Colors.lightGreen.shade900,
                       textColor: Colors.white,
+                    ),
+                    SizedBox(height: 15),
+                    Align(
+                      alignment: AlignmentGeometry.bottomRight,
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          'SKIP >',
+                          style: GoogleFonts.italiana(
+                            letterSpacing: 1.5,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),

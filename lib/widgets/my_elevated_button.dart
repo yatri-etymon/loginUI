@@ -8,11 +8,14 @@ class MyElevatedButton extends StatelessWidget {
     required this.onTap,
     required this.color,
     required this.textColor,
+    this.prefixIcon,
   });
+
   final String text;
-  final Function()? onTap;
+  final VoidCallback? onTap;
   final Color? color;
   final Color? textColor;
+  final Widget? prefixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -22,16 +25,24 @@ class MyElevatedButton extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         backgroundColor: color,
       ),
-
       onPressed: onTap,
-      child: Text(
-        text,
-        style: GoogleFonts.italiana(
-          letterSpacing: 2,
-          fontSize: 15,
-          fontWeight: FontWeight.w800,
-          color: textColor,
-        ),
+      child: Row(
+        children: [
+          if (prefixIcon != null) ...[prefixIcon!],
+
+          Expanded(
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.italiana(
+                letterSpacing: 2,
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                color: textColor,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
