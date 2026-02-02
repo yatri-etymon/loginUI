@@ -77,8 +77,20 @@ class _StartScreenState extends State<StartScreen> {
         body: Stack(
           children: [
             // 1. BACKGROUND LAYER
-            const BackgroundImage(),
-
+            //const BackgroundImage(),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [
+                    Color(0xFF7FA6F3), // top soft blue
+                    Color(0xFF6FA4DA), // mid blue
+                    Color.fromARGB(255, 79, 184, 184),
+                  ],
+                ),
+              ),
+            ),
             // 2. BLUR & OVERLAY
             if (isExpanded) ...[
               BackdropFilter(
@@ -161,9 +173,11 @@ class _StartScreenState extends State<StartScreen> {
                     if (!isExpanded)
                       Text(
                         'Get Started',
-                        style: GoogleFonts.sansita(
-                          fontSize: 22,
+                        style: GoogleFonts.firaSans(
+                          fontStyle: FontStyle.italic,
+                          fontSize: 20,
                           color: Colors.white,
+                          fontWeight: FontWeight.w400,
                         ),
                       )
                     else
