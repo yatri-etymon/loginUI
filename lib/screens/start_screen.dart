@@ -82,13 +82,20 @@ class StartScreen extends StatelessWidget {
                       alignment: AlignmentGeometry.bottomRight,
                       child: TextButton(
                         onPressed: () {},
-                        child: Text(
-                          'SKIP >',
-                          style: GoogleFonts.italiana(
-                            letterSpacing: 1.5,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(color: Colors.white, width: 1),
+                            ),
+                          ),
+                          child: Text(
+                            'SKIP >',
+                            style: GoogleFonts.italiana(
+                              letterSpacing: 1.5,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
