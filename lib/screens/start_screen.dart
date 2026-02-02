@@ -74,6 +74,11 @@ class StartScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(builder: (_) => WithOtpScreen()),
                       ),
+                      prefixIcon: Image.asset(
+                        'assets/icon/image.png',
+                        width: 30,
+                        color: Colors.white
+                      ),
                       color: Colors.lightGreen.shade900,
                       textColor: Colors.white,
                     ),
