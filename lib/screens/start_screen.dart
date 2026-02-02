@@ -21,7 +21,7 @@ class StartScreen extends StatelessWidget {
                   top: 16.0,
                   left: 16.0,
                   right: 16.0,
-                  bottom: 27.0,
+                  bottom: 60.0,
                 ),
                 child: Column(
                   children: [
@@ -35,31 +35,30 @@ class StartScreen extends StatelessWidget {
                       ),
                     ),
                     Spacer(),
-
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStatePropertyAll(Colors.white),
-                      ),
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => WithOtpScreen()),
-                      ),
-                      child: Text(
-                        'Login with OTP',
-                        style: GoogleFonts.lato(
-                          letterSpacing: 2,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.teal.shade700,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SquareTile(
+                          imagePath: 'assets/icons/image.png',
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => WithOtpScreen()),
+                          ),
                         ),
-                      ),
+                        SizedBox(width: 30),
+                        SquareTile(
+                          imagePath: 'assets/icons/google.png',
+                          onTap: () {},
+                        ),
+                      ],
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
                           Expanded(
-                            child: Divider(indent: 75, color: Colors.white),
+                            child: Divider(indent: 90, color: Colors.white),
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -74,46 +73,43 @@ class StartScreen extends StatelessWidget {
                             ),
                           ),
                           Expanded(
-                            child: Divider(endIndent: 75, color: Colors.white),
+                            child: Divider(endIndent: 90, color: Colors.white),
                           ),
                         ],
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SquareTile(
-                          imagePath: 'assets/icons/google.png',
-                          onTap: () {},
-                        ),
-                        SizedBox(width: 20),
-                        SquareTile(
-                          imagePath: 'assets/icons/apple.png',
-                          onTap: () {},
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                    TextButton(
-                      onPressed: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(color: Colors.white, width: 1),
-                          ),
-                        ),
-                        child: Text(
-                          'Skip For Now',
-                          style: GoogleFonts.lato(
-                            letterSpacing: 1,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white,
-                          ),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Text(
+                        'Skip For Now >',
+                        style: GoogleFonts.lato(
+                          letterSpacing: 2,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
                     ),
+                    //SizedBox(height: 8),
+                    // TextButton(
+                    //   onPressed: () {},
+                    //   child: Container(
+                    //     decoration: BoxDecoration(
+                    //       border: Border(
+                    //         bottom: BorderSide(color: Colors.white, width: 1),
+                    //       ),
+                    //     ),
+                    //     child: Text(
+                    //       'Skip For Now',
+                    //       style: GoogleFonts.lato(
+                    //         letterSpacing: 1,
+                    //         fontSize: 16,
+                    //         fontWeight: FontWeight.w400,
+                    //         color: Colors.white,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
