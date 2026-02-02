@@ -151,22 +151,49 @@ class _StartScreenState extends State<StartScreen> {
                 width: screenWidth * 0.85,
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.18),
+                  color: Colors.white.withValues(alpha: 0.10),
                   borderRadius: BorderRadius.circular(isExpanded ? 28 : 40),
                   border: Border.all(color: Colors.white24),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      'Login',
-                      style: GoogleFonts.kaushanScript(
-                        fontSize: 22,
-                        color: Colors.white,
+                    if (!isExpanded)
+                      Text(
+                        'Get Started',
+                        style: GoogleFonts.sansita(
+                          fontSize: 22,
+                          color: Colors.white,
+                        ),
+                      )
+                    else
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            'Login',
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontSize: 15,
+                            ),
+                          ),
+                          Container(
+                            width: 1,
+                            height: 20,
+                            color: Colors.white24,
+                          ),
+                          Text(
+                            'Skip',
+                            style: GoogleFonts.poppins(
+                              color: Colors.white70,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+
                     if (isExpanded) ...[
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 22),
                       TextField(
                         controller: emailController,
                         keyboardType: TextInputType.emailAddress,
@@ -238,18 +265,19 @@ class _SocialLoginSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      key: const ValueKey('social_content'),
       children: [
         Row(
-          children: const [
-            Expanded(child: Divider(indent: 5, color: Colors.white)),
+          children: [
+            const Expanded(child: Divider(indent: 5, color: Colors.white)),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 'OR',
-                style: TextStyle(color: Colors.white, fontSize: 12),
+                style: GoogleFonts.poppins(color: Colors.white, fontSize: 12),
               ),
             ),
-            Expanded(child: Divider(endIndent: 5, color: Colors.white)),
+            const Expanded(child: Divider(endIndent: 5, color: Colors.white)),
           ],
         ),
         const SizedBox(height: 16),
