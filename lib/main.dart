@@ -1,17 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:login_blue/screens/start_screen.dart';
+import 'package:login_blue/app/app_root.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const AppRoot());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: StartScreen()
-    );
-  }
-}

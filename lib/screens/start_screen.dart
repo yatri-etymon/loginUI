@@ -1,8 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:login_blue/widgets/UI/google_continue_field.dart';
-import 'package:login_blue/widgets/UI/skip_action.dart';
+import 'package:login_blue/app/app_flow_controller.dart';
+import 'package:login_blue/widgets/ui/google_continue_field.dart';
+import 'package:login_blue/widgets/ui/skip_action.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/ui/gradient_background.dart';
 import '../widgets/ui/welcome_header.dart';
@@ -171,32 +173,10 @@ class _StartScreenState extends State<StartScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: Divider(indent: 7, color: Colors.white),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              child: Text(
-                                'OR',
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                            const Expanded(
-                              child: Divider(endIndent: 7, color: Colors.white),
-                            ),
-                          ],
-                        ),
+
                         const SizedBox(height: 10),
                         AnimatedSize(
-                          duration: const Duration(milliseconds: 300),
+                          duration: const Duration(milliseconds: 250),
                           child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 300),
                             child: showOtp
@@ -204,12 +184,54 @@ class _StartScreenState extends State<StartScreen> {
                                     controller: otpController,
                                     focusNode: otpFocusNode,
                                     enabled: otpSent,
+                                    onCompleted: (otp) {
+                                      context
+                                          .read<AppFlowController>()
+                                          .goToProfileSetup1();
+                                    },
                                   )
-                                : GoogleLoginSection(onTap: () {}),
+                                : Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Expanded(
+                                            child: Divider(
+                                              indent: 7,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                            ),
+                                            child: Text(
+                                              'OR',
+                                              style: GoogleFonts.poppins(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                          const Expanded(
+                                            child: Divider(
+                                              endIndent: 7,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      GoogleLoginSection(onTap: () {}),
+                                    ],
+                                  ),
                           ),
                         ),
                         const SizedBox(height: 10),
-                        SkipAction(onTap: () {}),
+                        SkipAction(
+                          onTap: () => context
+                              .read<AppFlowController>()
+                              .goToProfileSetup1(),
+                        ),
                       ],
                     ],
                   ),

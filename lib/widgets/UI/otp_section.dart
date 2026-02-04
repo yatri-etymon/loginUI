@@ -6,12 +6,14 @@ class OtpSection extends StatelessWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final bool enabled;
+  final ValueChanged<String> onCompleted;
 
   const OtpSection({
     super.key,
     required this.controller,
     required this.focusNode,
     required this.enabled,
+    required this.onCompleted, 
   });
 
   @override
@@ -42,6 +44,7 @@ class OtpSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
           ),
+          onCompleted: onCompleted,
         ),
       ],
     );
