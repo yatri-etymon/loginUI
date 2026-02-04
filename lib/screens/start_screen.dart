@@ -1,15 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:login_blue/widgets/background_image.dart';
-import 'package:login_blue/widgets/delayed_animation.dart';
-import 'package:login_blue/widgets/square_tile.dart';
-import 'package:pinput/pinput.dart';
+import 'package:login_blue/widgets/UI/google_continue_field.dart';
+import 'package:login_blue/widgets/UI/skip_action.dart';
 
-// Assuming these are your local imports
-// import 'package:login_blue/widgets/background_image.dart';
-// import 'package:login_blue/widgets/delayed_animation.dart';
-// import 'package:login_blue/widgets/square_tile.dart';
+import '../widgets/ui/gradient_background.dart';
+import '../widgets/ui/welcome_header.dart';
+import '../widgets/ui/glass_card.dart';
+import '../widgets/ui/otp_section.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -23,9 +21,9 @@ class _StartScreenState extends State<StartScreen> {
   bool showOtp = false;
   bool otpSent = false;
 
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController otpController = TextEditingController();
-  final FocusNode otpFocusNode = FocusNode();
+  final emailController = TextEditingController();
+  final otpController = TextEditingController();
+  final otpFocusNode = FocusNode();
 
   @override
   void dispose() {
@@ -59,39 +57,22 @@ class _StartScreenState extends State<StartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-    final bool isKeyboardOpen = keyboardHeight > 0;
+    final isKeyboardOpen = keyboardHeight > 0;
+    final width = MediaQuery.of(context).size.width;
 
     return PopScope(
       canPop: !isExpanded,
-      onPopInvokedWithResult: (didPop, result) {
-        if (!didPop && isExpanded) {
-          _closeLogin();
-        }
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && isExpanded) _closeLogin();
       },
       child: Scaffold(
-        // the background layers when the keyboard pops up.
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.black,
         body: Stack(
           children: [
-            // 1. BACKGROUND LAYER
-            //const BackgroundImage(),
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: [
-                    Color(0xFF7FA6F3), // top soft blue
-                    Color(0xFF6FA4DA), // mid blue
-                    Color.fromARGB(255, 79, 184, 184),
-                  ],
-                ),
-              ),
-            ),
-            // 2. BLUR & OVERLAY
+            const GradientBackground(),
+
             if (isExpanded) ...[
               BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -100,257 +81,144 @@ class _StartScreenState extends State<StartScreen> {
               ModalBarrier(dismissible: true, onDismiss: _closeLogin),
             ],
 
-            // 3. STATIC CONTENT (Welcome Text)
-            SafeArea(
-              child: SizedBox(
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 110),
-                    DelayedAnimation(
-                      delay: 500,
-                      child: Text(
-                        'Welcome',
-                        style: GoogleFonts.kaushanScript(
-                          fontSize: 38,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    DelayedAnimation(
-                      delay: 700,
-                      child: Text(
-                        'Your journey starts here',
-                        style: GoogleFonts.poppins(color: Colors.white70),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // Instead of a Column, we position this relative to the bottom.
+            const WelcomeHeader(),
+
             AnimatedPositioned(
               duration: const Duration(milliseconds: 400),
               curve: Curves.easeOutCubic,
               left: 0,
               right: 0,
-              // If keyboard is open, move card above it. Otherwise, park it near bottom.
               bottom: isKeyboardOpen ? keyboardHeight + 20 : 60,
-              child: Center(child: _buildGlassCard(size.width)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGlassCard(double screenWidth) {
-    return DelayedAnimation(
-      delay: 900,
-      child: Material(
-        color: Colors.transparent,
-        child: GestureDetector(
-          onTap: () {
-            if (!isExpanded) setState(() => isExpanded = true);
-          },
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(isExpanded ? 28 : 40),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 400),
-                width: screenWidth * 0.85,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(isExpanded ? 28 : 40),
-                  border: Border.all(color: Colors.white24),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (!isExpanded)
-                      Text(
-                        'Get Started',
-                        style: GoogleFonts.firaSans(
-                          fontStyle: FontStyle.italic,
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400,
+              child: Center(
+                child: GlassCard(
+                  width: width,
+                  isExpanded: isExpanded,
+                  onTap: () {
+                    if (!isExpanded) setState(() => isExpanded = true);
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (!isExpanded)
+                        Text(
+                          'Get Started',
+                          style: GoogleFonts.firaSans(
+                            fontStyle: FontStyle.italic,
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        )
+                      else
+                        Text(
+                          'Login',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 15,
+                          ),
                         ),
-                      )
-                    else
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            'Login',
-                            style: GoogleFonts.poppins(
-                              color: Colors.white,
-                              fontSize: 15,
-                            ),
-                          ),
-                          Container(
-                            width: 1,
-                            height: 20,
-                            color: Colors.white24,
-                          ),
-                          Text(
-                            'Skip',
-                            style: GoogleFonts.poppins(
-                              color: Colors.white70,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ],
-                      ),
 
-                    if (isExpanded) ...[
-                      const SizedBox(height: 22),
-                      TextField(
-                        controller: emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        autofocus: false,
-                        onChanged: (_) => setState(() {}),
-                        onTap: () {
-                          if (!showOtp) setState(() => showOtp = true);
-                        },
-                        style: const TextStyle(color: Colors.black87),
-                        decoration: InputDecoration(
-                          hintText: 'Email / Phone number',
-                          hintStyle: GoogleFonts.poppins(
-                            color: Colors.grey.shade600,
-                          ),
-                          filled: true,
-                          fillColor: Colors.white70,
-                          suffixIcon: emailController.text.trim().isNotEmpty
-                              ? TextButton(
-                                  onPressed: otpSent ? null : _sendOtp,
-                                  child: Text(
-                                    otpSent ? 'Sent' : 'Send OTP',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 15,
-                                      color: otpSent
-                                          ? Colors.grey.shade600
-                                          : Colors.lightBlue.shade600,
+                      if (isExpanded) ...[
+                        const SizedBox(height: 22),
+                        TextField(
+                          controller: emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          onChanged: (_) => setState(() {}),
+                          onTap: () {
+                            if (!showOtp) setState(() => showOtp = true);
+                          },
+                          style: const TextStyle(color: Colors.black87),
+                          decoration: InputDecoration(
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              child: Image.asset(
+                                'assets/icons/otp.png',
+                                height: 27,
+                                width: 27,
+                                color: Colors.lightBlue.shade700,
+                              ),
+                            ),
+                            prefixIconConstraints: const BoxConstraints(
+                              minWidth: 40,
+                              minHeight: 40,
+                            ),
+                            hintText: 'Email / Phone number',
+                            hintStyle: GoogleFonts.poppins(
+                              color: Colors.grey.shade600,
+                              fontSize: 14,
+                            ),
+                            filled: true,
+                            fillColor: Colors.white70,
+                            suffixIcon: emailController.text.trim().isNotEmpty
+                                ? TextButton(
+                                    onPressed: otpSent ? null : _sendOtp,
+                                    child: Text(
+                                      otpSent ? 'Sent' : 'Send OTP',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 15,
+                                        color: otpSent
+                                            ? Colors.grey.shade600
+                                            : Colors.lightBlue.shade600,
+                                      ),
                                     ),
-                                  ),
-                                )
-                              : null,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide.none,
+                                  )
+                                : null,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: BorderSide.none,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      AnimatedSize(
-                        duration: const Duration(milliseconds: 300),
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 300),
-                          child: showOtp
-                              ? _OtpSection(
-                                  key: const ValueKey('otp'),
-                                  controller: otpController,
-                                  focusNode: otpFocusNode,
-                                  enabled: otpSent,
-                                )
-                              : _SocialLoginSection(
-                                  key: const ValueKey('social'),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const Expanded(
+                              child: Divider(indent: 7, color: Colors.white),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              child: Text(
+                                'OR',
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 12,
                                 ),
+                              ),
+                            ),
+                            const Expanded(
+                              child: Divider(endIndent: 7, color: Colors.white),
+                            ),
+                          ],
                         ),
-                      ),
+                        const SizedBox(height: 10),
+                        AnimatedSize(
+                          duration: const Duration(milliseconds: 300),
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            child: showOtp
+                                ? OtpSection(
+                                    controller: otpController,
+                                    focusNode: otpFocusNode,
+                                    enabled: otpSent,
+                                  )
+                                : GoogleLoginSection(onTap: () {}),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        SkipAction(onTap: () {}),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
       ),
-    );
-  }
-}
-
-class _SocialLoginSection extends StatelessWidget {
-  const _SocialLoginSection({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      key: const ValueKey('social_content'),
-      children: [
-        Row(
-          children: [
-            const Expanded(child: Divider(indent: 5, color: Colors.white)),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text(
-                'OR',
-                style: GoogleFonts.poppins(color: Colors.white, fontSize: 12),
-              ),
-            ),
-            const Expanded(child: Divider(endIndent: 5, color: Colors.white)),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SquareTile(imagePath: 'assets/icons/google.png', onTap: () {}),
-            const SizedBox(width: 16),
-            SquareTile(imagePath: 'assets/icons/apple.png', onTap: () {}),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _OtpSection extends StatelessWidget {
-  final TextEditingController controller;
-  final FocusNode focusNode;
-  final bool enabled;
-
-  const _OtpSection({
-    super.key,
-    required this.controller,
-    required this.focusNode,
-    required this.enabled,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          'Enter the 6-digit OTP',
-          style: GoogleFonts.poppins(fontSize: 13, color: Colors.white),
-        ),
-        const SizedBox(height: 14),
-        Pinput(
-          length: 6,
-          controller: controller,
-          focusNode: focusNode,
-          enabled: enabled,
-          keyboardType: TextInputType.number,
-          defaultPinTheme: PinTheme(
-            width: 42,
-            height: 48,
-            textStyle: GoogleFonts.poppins(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white70,
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          onCompleted: (otp) {},
-        ),
-      ],
     );
   }
 }

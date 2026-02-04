@@ -22,4 +22,4 @@ flutter:
   assets:
     - 'assets\image\image.jpg'
     - 'assets\icons\google.png'
-    - 'assets\icons\apple.png'
+    - 'assets\icons\otp.png'
