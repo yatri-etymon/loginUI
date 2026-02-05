@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:login_blue/app/app_flow_controller.dart';
+import 'package:login_blue/widgets/effects/radial_bloom_painter.dart';
 import 'package:login_blue/widgets/ui/theme_selector.dart';
 import 'package:login_blue/widgets/common/birth_year_picker.dart';
 import 'package:login_blue/widgets/common/name_field.dart';
 import 'package:provider/provider.dart';
+import 'package:login_blue/theme/app_colors.dart';
+import 'package:login_blue/theme/theme_controller.dart';
 
 import '../widgets/ui/gradient_background.dart';
 import '../widgets/ui/glass_card.dart';
@@ -19,19 +22,19 @@ class ProfileSetup1 extends StatefulWidget {
 
 class _ProfileSetup1State extends State<ProfileSetup1>
     with SingleTickerProviderStateMixin {
+
   final TextEditingController nameController = TextEditingController();
   final TextEditingController birthYearController = TextEditingController();
-  Offset? _bloomCenter;
+
   late AnimationController _bloomController;
   late Animation<double> _bloomAnimation;
+
+  Offset? _bloomCenter;
   Color? selectedThemeColor;
   int selectedThemeIndex = -1;
 
-  final List<Color> themeColors = [
-    Colors.blueAccent,
-    Colors.purpleAccent,
-    Colors.greenAccent,
-  ];
+  //get gradients from app_colors.dart
+  final gradientEntries = AppColors.gradients.entries.toList();
 
   @override
   void initState() {
@@ -68,7 +71,7 @@ class _ProfileSetup1State extends State<ProfileSetup1>
 
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult:(didPop, result) {
+      onPopInvokedWithResult: (didPop, result) {
         context.read<AppFlowController>().goToStart();
       },
       child: Scaffold(
@@ -77,16 +80,24 @@ class _ProfileSetup1State extends State<ProfileSetup1>
         body: Stack(
           children: [
             const GradientBackground(),
+
+            //radial bloom overlay
             if (selectedThemeColor != null && _bloomCenter != null)
               Positioned.fill(
-                child: CustomPaint(
-                  painter: _RadialBloomPainter(
-                    center: _bloomCenter!,
-                    color: selectedThemeColor!,
-                    progress: _bloomAnimation.value,
-                  ),
+                child: AnimatedBuilder(
+                  animation: _bloomAnimation,
+                  builder: (_, __) {
+                    return CustomPaint(
+                      painter: RadialBloomPainter(
+                        center: _bloomCenter!,
+                        color: selectedThemeColor!,
+                        progress: _bloomAnimation.value,
+                      ),
+                    );
+                  },
                 ),
               ),
+
             SingleChildScrollView(
               padding: EdgeInsets.only(
                 top: MediaQuery.of(context).size.height * 0.15,
@@ -97,103 +108,107 @@ class _ProfileSetup1State extends State<ProfileSetup1>
                   width: width,
                   isExpanded: true,
                   onTap: () {},
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 20,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 20,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+
+                        /// Header
+                        Text(
+                          'Profile Setup (1 / 2)',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // Header
-                            Text(
-                              'Profile Setup (1 / 2)',
+
+                        const SizedBox(height: 18),
+
+                        /// Name field
+                        NameField(
+                          controller: nameController,
+                          onChanged: (_) => setState(() {}),
+                          hintText: 'Name',
+                        ),
+
+                        const SizedBox(height: 14),
+
+                        /// Birth year picker
+                        BirthYearPicker(
+                          controller: birthYearController,
+                          onTap: () => _showYearPicker(context),
+                          hintTeaxt: 'Birth Year',
+                        ),
+
+                        const SizedBox(height: 22),
+
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Choose your theme',
+                            style: GoogleFonts.poppins(
+                              color: Colors.grey[50],
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        ThemeSelector(
+                          gradients: gradientEntries.map((e) => e.value).toList(),
+                          selectedIndex: selectedThemeIndex,
+                          onSelected: (index, tapPosition) {
+
+                            final selectedId = gradientEntries[index].key;
+                            final selectedGradient = gradientEntries[index].value;
+
+                            setState(() {
+                              selectedThemeIndex = index;
+                              selectedThemeColor = selectedGradient.first;
+                              _bloomCenter = tapPosition;
+                            });
+
+                            _bloomController.forward(from: 0);
+
+                            /// 🔥 APPLY APP THEME
+                            context.read<ThemeController>().setTheme(selectedId);
+                          },
+                        ),
+
+                        const SizedBox(height: 26),
+
+                        /// Continue button
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: isFormValid ? () {} : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  selectedThemeColor ?? Colors.white,
+                              foregroundColor: Colors.black,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ),
+                            child: Text(
+                              'Continue →',
                               style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 14,
+                                fontSize: 15,
                                 fontWeight: FontWeight.w500,
+                                color: Colors.grey[50]
                               ),
                             ),
-      
-                            const SizedBox(height: 18),
-      
-                            // Name
-                            NameField(
-                              controller: nameController,
-                              onChanged: (_) => setState(() {}),
-                              hintText: 'Name',
-                            ),
-      
-                            const SizedBox(height: 14),
-      
-                            // Birth Year Picker
-                            BirthYearPicker(
-                              controller: birthYearController,
-                              onTap: () => _showYearPicker(context),
-                              hintTeaxt: 'Birth Year',
-                            ),
-      
-                            const SizedBox(height: 22),
-      
-                            // Theme label
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                'Choose your theme',
-                                style: GoogleFonts.poppins(
-                                  color: Colors.grey[50],
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ),
-      
-                            const SizedBox(height: 10),
-      
-                            // Theme dots
-                            ThemeSelector(
-                              colors: themeColors,
-                              selectedIndex: selectedThemeIndex,
-                              onSelected: (index) {
-                                setState(() {
-                                  selectedThemeIndex = index;
-                                  selectedThemeColor = themeColors[index];
-                                });
-                              },
-                            ),
-      
-                            const SizedBox(height: 26),
-      
-                            // Continue button
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: isFormValid ? () {} : null,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      selectedThemeColor ?? Colors.white,
-                                  foregroundColor: Colors.black,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 14,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                ),
-                                child: Text(
-                                  'Continue →',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -204,6 +219,7 @@ class _ProfileSetup1State extends State<ProfileSetup1>
     );
   }
 
+  /// Birth year picker
   void _showYearPicker(BuildContext context) {
     final currentYear = DateTime.now().year;
     int tempSelectedYear = birthYearController.text.isNotEmpty
@@ -223,23 +239,22 @@ class _ProfileSetup1State extends State<ProfileSetup1>
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const SizedBox(width: 48),
                     Text(
                       'Select birth year',
-                      style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+                      style:
+                          GoogleFonts.poppins(fontWeight: FontWeight.w500),
                     ),
                     TextButton(
                       onPressed: () {
                         setState(() {
-                          birthYearController.text = tempSelectedYear
-                              .toString();
+                          birthYearController.text =
+                              tempSelectedYear.toString();
                         });
                         Navigator.pop(context);
                       },
@@ -277,46 +292,3 @@ class _ProfileSetup1State extends State<ProfileSetup1>
   }
 }
 
-class _RadialBloomPainter extends CustomPainter {
-  final Offset center;
-  final Color color;
-  final double progress; // 0.0 → 1.0
-
-  _RadialBloomPainter({
-    required this.center,
-    required this.color,
-    required this.progress,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    // Calm expansion: 30% → 55% of screen
-    final minRadius = size.shortestSide * 0.28;
-    final maxRadius = size.shortestSide * 0.70;
-    final radius = minRadius + (maxRadius - minRadius) * progress;
-
-    final paint = Paint()
-      ..shader = RadialGradient(
-        center: Alignment(
-          (center.dx / size.width) * 2 - 1,
-          (center.dy / size.height) * 2 - 1,
-        ),
-        radius: 0.6,
-        colors: [
-          color.withValues(alpha: 0.22),
-          color.withValues(alpha: 0.10),
-          Colors.transparent,
-        ],
-        stops: const [0.0, 0.4, 1.0],
-      ).createShader(Rect.fromCircle(center: center, radius: radius));
-
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _RadialBloomPainter oldDelegate) {
-    return oldDelegate.progress != progress ||
-        oldDelegate.center != center ||
-        oldDelegate.color != color;
-  }
-}

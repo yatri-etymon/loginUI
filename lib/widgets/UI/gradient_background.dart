@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../theme/theme_controller.dart';
 
 class GradientBackground extends StatelessWidget {
   const GradientBackground({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
+    final gradient = context.watch<ThemeController>().gradient;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 400),
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          colors: [
-            Color(0xFF7FA6F3),
-            Color(0xFF6FA4DA),
-            Color(0xFF4FB8B8),
-          ],
+          colors: gradient,
         ),
       ),
     );

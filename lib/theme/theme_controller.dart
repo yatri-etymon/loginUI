@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
+import 'app_colors.dart';
 
 class ThemeController extends ChangeNotifier {
-  Color _primaryColor = Colors.blueAccent;
+  /// store selected gradient ID
+  String _selectedThemeId = AppColors.defaultId;
 
-  Color get primaryColor => _primaryColor;
+  /// get gradient colors
+  List<Color> get gradient => AppColors.gradients[_selectedThemeId]!;
 
-  void setPrimaryColor(Color color) {
-    _primaryColor = color;
+  /// primary color for Material theme
+  Color get primaryColor => gradient.first;
+
+  /// change theme
+  void setTheme(String themeId) {
+    _selectedThemeId = themeId;
     notifyListeners();
   }
+
+  /// current id getter (useful later for saving user)
+  String get currentThemeId => _selectedThemeId;
 }
