@@ -1,6 +1,7 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
-class ThemeSelector extends StatelessWidget {
+class ThemeSelector extends StatefulWidget {
   final List<List<Color>> gradients;
   final int selectedIndex;
   final Function(int index, Offset tapPosition) onSelected;
@@ -13,54 +14,96 @@ class ThemeSelector extends StatelessWidget {
   });
 
   @override
+  State<ThemeSelector> createState() => _ThemeSelectorState();
+}
+
+class _ThemeSelectorState extends State<ThemeSelector>
+    with TickerProviderStateMixin {
+
+  late final AnimationController _floatController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _floatController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _floatController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 70,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        itemCount: gradients.length,
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        itemBuilder: (context, index) {
-          final isSelected = index == selectedIndex;
+      height: 80,
+      child: AnimatedBuilder(
+        animation: _floatController,
+        builder: (context, _) {
+          return ListView.builder(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: widget.gradients.length,
+            itemBuilder: (context, index) {
 
-          return GestureDetector(
-            onTapDown: (details) {
-              onSelected(index, details.globalPosition);
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 280),
-              curve: Curves.easeOutCubic,
-              margin: const EdgeInsets.symmetric(horizontal: 10),
-              width: isSelected ? 54 : 44,
-              height: isSelected ? 54 : 44,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
+              final isSelected = index == widget.selectedIndex;
 
-                //gradient orb
-                gradient: LinearGradient(
-                  colors: gradients[index],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+              /// floating offset
+              final floatOffset =
+                  sin((_floatController.value * 2 * pi) + index) * 6;
 
-                /// glow when selected
-                boxShadow: [
-                  if (isSelected)
-                    BoxShadow(
-                      color: gradients[index].first.withValues(alpha: 0.65),
-                      blurRadius: 22,
-                      spreadRadius: 2,
-                    )
-                  else
-                    BoxShadow(
-                      color: gradients[index].first.withValues(alpha: 0.25),
-                      blurRadius: 10,
-                      spreadRadius: 0.5,
+              /// scale breathing
+              final scale =
+                  1 + (sin((_floatController.value * 2 * pi) + index) * 0.05);
+
+              return Transform.translate(
+                offset: Offset(0, floatOffset),
+                child: Transform.scale(
+                  scale: isSelected ? 1.13 : scale,
+                  child: GestureDetector(
+                    onTapDown: (details) {
+                      widget.onSelected(index, details.globalPosition);
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 280),
+                      curve: Curves.easeOutCubic,
+                      margin: const EdgeInsets.symmetric(horizontal: 12),
+                      width: isSelected ? 53 : 43,
+                      height: isSelected ? 53 : 43,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          colors: widget.gradients[index],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        boxShadow: [
+                          if (isSelected)
+                            BoxShadow(
+                              color: widget.gradients[index].first
+                                  .withValues(alpha: .7),
+                              blurRadius: 26,
+                              spreadRadius: 3,
+                            )
+                          else
+                            BoxShadow(
+                              color: widget.gradients[index].first
+                                  .withValues(alpha: .25),
+                              blurRadius: 10,
+                            ),
+                        ],
+                      ),
                     ),
-                ],
-              ),
-            ),
+                  ),
+                ),
+              );
+            },
           );
         },
       ),

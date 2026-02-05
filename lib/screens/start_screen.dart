@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../widgets/ui/gradient_background.dart';
 import '../widgets/ui/welcome_header.dart';
-import '../widgets/ui/glass_card.dart';
+import '../widgets/common/glass_card.dart';
 import '../widgets/ui/otp_section.dart';
 
 class StartScreen extends StatefulWidget {
@@ -61,7 +61,6 @@ class _StartScreenState extends State<StartScreen> {
   Widget build(BuildContext context) {
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     final isKeyboardOpen = keyboardHeight > 0;
-    final width = MediaQuery.of(context).size.width;
 
     return PopScope(
       canPop: !isExpanded,
@@ -93,8 +92,9 @@ class _StartScreenState extends State<StartScreen> {
               bottom: isKeyboardOpen ? keyboardHeight + 20 : 60,
               child: Center(
                 child: GlassCard(
-                  width: width,
-                  isExpanded: isExpanded,
+                  width: MediaQuery.of(context).size.width * 0.90,
+                  useDelay: true,
+                  enableTap: true,
                   onTap: () {
                     if (!isExpanded) setState(() => isExpanded = true);
                   },
