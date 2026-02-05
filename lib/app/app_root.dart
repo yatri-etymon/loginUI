@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login_blue/app/app_flow_controller.dart';
-import 'package:login_blue/screens/profile_setup1.dart';
+import 'package:login_blue/screens/profile_screen.dart';
 import 'package:login_blue/screens/start_screen.dart';
 import 'package:login_blue/theme/theme_controller.dart';
 import 'package:provider/provider.dart';
@@ -32,8 +32,8 @@ class AppRoot extends StatelessWidget {
 
   Widget _buildHome(AppFlowController flow) {
     switch (flow.state) {
-      case AppFlowState.profileSetup1:
-        return const ProfileSetup1();
+      case AppFlowState.profile:
+        return const ProfileScreen();
       case AppFlowState.start:
         return const StartScreen();
     }

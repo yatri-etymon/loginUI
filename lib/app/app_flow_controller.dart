@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum AppFlowState { start, profileSetup1 }
+enum AppFlowState { start, profile }
 
 class AppFlowController extends ChangeNotifier {
   AppFlowState _state = AppFlowState.start;
@@ -12,8 +12,8 @@ class AppFlowController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void goToProfileSetup1() {
-    _state = AppFlowState.profileSetup1;
+  void goToProfile() {
+    _state = AppFlowState.profile;
     notifyListeners();
   }
 }

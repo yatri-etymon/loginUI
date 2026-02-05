@@ -187,7 +187,7 @@ class _StartScreenState extends State<StartScreen> {
                                     onCompleted: (otp) {
                                       context
                                           .read<AppFlowController>()
-                                          .goToProfileSetup1();
+                                          .goToProfile();
                                     },
                                   )
                                 : Column(
@@ -228,9 +228,8 @@ class _StartScreenState extends State<StartScreen> {
                         ),
                         const SizedBox(height: 10),
                         SkipAction(
-                          onTap: () => context
-                              .read<AppFlowController>()
-                              .goToProfileSetup1(),
+                          onTap: () =>
+                              context.read<AppFlowController>().goToProfile(),
                         ),
                       ],
                     ],
