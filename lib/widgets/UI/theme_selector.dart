@@ -41,7 +41,7 @@ class _ThemeSelectorState extends State<ThemeSelector>
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 80,
+      height: 95,
       child: AnimatedBuilder(
         animation: _floatController,
         builder: (context, _) {
@@ -88,7 +88,7 @@ class _ThemeSelectorState extends State<ThemeSelector>
                             BoxShadow(
                               color: widget.gradients[index].first
                                   .withValues(alpha: .7),
-                              blurRadius: 26,
+                              blurRadius: 13,
                               spreadRadius: 3,
                             )
                           else

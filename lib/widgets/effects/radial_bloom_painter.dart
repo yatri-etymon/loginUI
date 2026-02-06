@@ -25,7 +25,7 @@ class RadialBloomPainter extends CustomPainter {
         ),
         radius: 1.0,
         colors: [
-          color.withValues(alpha: 0.35),
+          color.withValues(alpha: 0.25),
           color.withValues(alpha: 0.18),
           color.withValues(alpha: 0.08),
           Colors.transparent,

@@ -158,22 +158,24 @@ class _ProfileScreenState extends State<ProfileScreen>
       key: key,
       mainAxisSize: MainAxisSize.min,
       children: [
-        _title('Profile Setup (1 / 2)'),
+        _title('P R O F I L E'),
         const SizedBox(height: 18),
 
         NameField(
           controller: nameController,
           onChanged: (_) => setState(() {}),
-          hintText: 'Name',
+          hintText: Text('Name'),
         ),
 
-        const SizedBox(height: 14),
+        const SizedBox(height: 18),
 
         _selectorBox(
-          birthYearController.text.isEmpty
-              ? 'Select Birth Year'
+          label: 'Birth Year',
+          value: birthYearController.text.isEmpty
+              ? ''
               : birthYearController.text,
-          _showYearPicker,
+
+          onTap: _showYearPicker,
         ),
 
         const SizedBox(height: 22),
@@ -229,14 +231,15 @@ class _ProfileScreenState extends State<ProfileScreen>
           children: [
             _backButton(),
             const Spacer(),
-            _title('Profile Setup (2 / 2)'),
+            _title('P R O F I L E'),
+            const SizedBox(width: 25),
             const Spacer(),
           ],
         ),
 
         const SizedBox(height: 26),
 
-        _label('Gender'),
+        _label('  Gender :'),
         const SizedBox(height: 10),
         Row(
           children: [
@@ -248,31 +251,33 @@ class _ProfileScreenState extends State<ProfileScreen>
           ],
         ),
 
-        const SizedBox(height: 22),
+        const SizedBox(height: 30),
 
-        _label('Height (cm)'),
-        const SizedBox(height: 10),
+        // _label('Height (cm)'),
+        // const SizedBox(height: 10),
         _selectorBox(
-          heightController.text.isEmpty
-              ? 'Select height'
+          label: 'Height (cm)',
+          value: heightController.text.isEmpty
+              ? ''
               : heightController.text,
-          _showHeightPicker,
-        ),
-
-        const SizedBox(height: 20),
-
-        _label('Weight (kg)'),
-        const SizedBox(height: 10),
-        _selectorBox(
-          weightController.text.isEmpty
-              ? 'Select weight'
-              : weightController.text,
-          _showWeightPicker,
+          onTap: _showHeightPicker,
         ),
 
         const SizedBox(height: 30),
 
-        _primaryButton(text: 'Done', enabled: isStep2Valid, onTap: () {}),
+        // _label('Weight (kg)'),
+        // const SizedBox(height: 10),
+        _selectorBox(
+          label: 'Weight (kg)',
+          value: weightController.text.isEmpty
+              ? ''
+              : weightController.text,
+          onTap: _showWeightPicker,
+        ),
+
+        const SizedBox(height: 30),
+
+        _primaryButton(text: 'Done', enabled: true, onTap: () {}),
 
         const SizedBox(height: 12),
 
@@ -312,12 +317,12 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   void _showHeightPicker() {
-    final values = List.generate(121, (i) => '${140 + i} cm');
+    final values = List.generate(166, (i) => '${40 + i} cm');
     _showWheelPicker('Select Height', values, heightController);
   }
 
   void _showWeightPicker() {
-    final values = List.generate(111, (i) => '${40 + i} kg');
+    final values = List.generate(101, (i) => '${14 + i} kg');
     _showWheelPicker('Select Weight', values, weightController);
   }
 
@@ -397,7 +402,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: selected
-              ? (selectedThemeColor ?? Colors.white).withValues(alpha: 0.90)
+              ? (selectedThemeColor ?? Colors.white).withValues(alpha: 0.93)
               : Colors.white.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(30),
           border: Border.all(color: Colors.white54),
@@ -407,19 +412,71 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _selectorBox(String text, VoidCallback onTap) => GestureDetector(
-    onTap: onTap,
-    child: Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white24),
+  Widget _selectorBox({
+    required String label,
+    required String value,
+    required VoidCallback onTap,
+  }) {
+    final hasValue = value.isNotEmpty;
+    final focusNode = FocusNode();
+
+    return Focus(
+      focusNode: focusNode,
+      child: GestureDetector(
+        onTap: () {
+          focusNode.requestFocus(); // makes label float
+          onTap();
+        },
+        child: InputDecorator(
+          isEmpty: !hasValue,
+          isFocused: focusNode.hasFocus,
+          decoration: InputDecoration(
+            labelText: label,
+
+            labelStyle: GoogleFonts.poppins(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+
+            floatingLabelStyle: GoogleFonts.poppins(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+
+            floatingLabelBehavior: FloatingLabelBehavior.auto,
+
+            filled: true,
+            fillColor: Colors.white.withValues(alpha: 0.01),
+
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
+
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: Colors.white24),
+            ),
+
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: Colors.white24),
+            ),
+
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: Colors.white60, width: 1.3),
+            ),
+          ),
+
+          child: Text(
+            hasValue ? value : "",
+            style: GoogleFonts.poppins(color: Colors.white, fontSize: 15),
+          ),
+        ),
       ),
-      child: Text(text, style: GoogleFonts.poppins(color: Colors.white)),
-    ),
-  );
+    );
+  }
 
   Widget _primaryButton({
     required String text,

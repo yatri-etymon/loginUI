@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class NameField extends StatelessWidget {
   final TextEditingController controller;
   final ValueChanged<String>? onChanged;
-  final String? hintText;
+  final Widget? hintText;
 
   const NameField({
     super.key,
@@ -19,12 +19,13 @@ class NameField extends StatelessWidget {
       controller: controller,
       keyboardType: TextInputType.name,
       onChanged: onChanged,
-      style: const TextStyle(color: Colors.black87),
+      style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: GoogleFonts.poppins(color: Colors.white),
+        label: hintText,
+        labelStyle: GoogleFonts.poppins(color: Colors.white),
         filled: true,
-        fillColor: Colors.white.withValues(alpha: 0.1),
+        fillColor: Colors.white.withValues(alpha: 0.01),
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: Colors.white24, width: 1),
