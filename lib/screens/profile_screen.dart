@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:login_blue/widgets/common/wheel_picker_content.dart';
 import 'package:provider/provider.dart';
 
 import 'package:login_blue/app/app_flow_controller.dart';
@@ -9,7 +10,6 @@ import 'package:login_blue/theme/theme_controller.dart';
 import 'package:login_blue/widgets/common/glass_card.dart';
 import 'package:login_blue/widgets/common/glass_popup.dart';
 import 'package:login_blue/widgets/common/name_field.dart';
-import 'package:login_blue/widgets/common/birth_year_picker.dart';
 
 import 'package:login_blue/widgets/ui/year_picker_content.dart';
 import 'package:login_blue/widgets/ui/theme_selector.dart';
@@ -26,7 +26,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen>
     with SingleTickerProviderStateMixin {
-
   final nameController = TextEditingController();
   final birthYearController = TextEditingController();
   final heightController = TextEditingController();
@@ -83,7 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (_, __) {
+      onPopInvokedWithResult: (_, _) {
         context.read<AppFlowController>().goToStart();
       },
       child: Scaffold(
@@ -96,7 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               Positioned.fill(
                 child: AnimatedBuilder(
                   animation: _bloomAnimation,
-                  builder: (_, __) {
+                  builder: (_, _) {
                     return CustomPaint(
                       painter: RadialBloomPainter(
                         center: _bloomCenter!,
@@ -170,10 +169,11 @@ class _ProfileScreenState extends State<ProfileScreen>
 
         const SizedBox(height: 14),
 
-        BirthYearPicker(
-          controller: birthYearController,
-          hintTeaxt: 'Birth Year',
-          onTap: _showYearPicker,
+        _selectorBox(
+          birthYearController.text.isEmpty
+              ? 'Select Birth Year'
+              : birthYearController.text,
+          _showYearPicker,
         ),
 
         const SizedBox(height: 22),
@@ -223,7 +223,6 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   Widget _buildStep2(Key key) {
     return Column(
-      key: key,
       mainAxisSize: MainAxisSize.min,
       children: [
         Row(
@@ -278,9 +277,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         const SizedBox(height: 12),
 
         TextButton(
-          onPressed: () {
-            // Skip
-          },
+          onPressed: () {},
           child: Text(
             'Skip for now >',
             style: GoogleFonts.poppins(color: Colors.white),
@@ -397,10 +394,10 @@ class _ProfileScreenState extends State<ProfileScreen>
       onTap: () => setState(() => selectedGender = label),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: selected
-              ? (selectedThemeColor ?? Colors.white).withValues(alpha: 0.45)
+              ? (selectedThemeColor ?? Colors.white).withValues(alpha: 0.90)
               : Colors.white.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(30),
           border: Border.all(color: Colors.white54),

@@ -22,15 +22,17 @@ class NameField extends StatelessWidget {
       style: const TextStyle(color: Colors.black87),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: GoogleFonts.poppins(
-          color: Colors.grey.shade600,
-          fontSize: 14,
-        ),
+        hintStyle: GoogleFonts.poppins(color: Colors.white),
         filled: true,
-        fillColor: Colors.white70,
-        border: OutlineInputBorder(
+        fillColor: Colors.white.withValues(alpha: 0.1),
+        enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: Colors.white24, width: 1),
+        ),
+
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Colors.white60, width: 1.4),
         ),
       ),
     );
